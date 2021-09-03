@@ -1,10 +1,10 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
-#define NUM_MAX_VERTEX 10
+#define NUM_MAX_VERTEX 4
 
 // Matriz de Adjacencia
-// Define um grafo direcionado não ponderado, implementado por matriz de adjacencia
+// Define um grafo não direcionado não ponderado, implementado por matriz de adjacencia
 class Graph 
 {
     public: 
