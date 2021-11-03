@@ -1,5 +1,7 @@
 package com.puc.structures;
 
+import com.puc.structures.interfaces.IVertex;
+
 import java.util.*;
 
 /*
@@ -7,12 +9,16 @@ import java.util.*;
     One vertex has one adjacent list
     This adjacent list defines the reference between two vertexes (edge)
  */
-public class Vertex<T> {
+public class Vertex<T> implements IVertex<T> {
     private T label;
     /*
         Weights are always integers
      */
-    private List<Map<Vertex<T>, Integer>> adjList;
+    private List<IVertex<T>> adjList;
+
+    public Vertex() {
+
+    }
 
     public Vertex(T label) {
         this.label = label;
@@ -27,32 +33,15 @@ public class Vertex<T> {
         StringBuilder builder = new StringBuilder();
 
         if(adjList.isEmpty()) {
-            builder.append("This vertex is a final vertex");
+            builder.append(this.label).append(" -> ");
         } else {
-            for (Map<Vertex<T>, Integer> edge : adjList) {
-                Optional<Map.Entry<Vertex<T>, Integer>> vertexInMap = edge
-                        .entrySet().stream()
-                        .findFirst();
-
-                if (vertexInMap.isPresent()) {
-                    Map.Entry<Vertex<T>, Integer> vertexEntry = vertexInMap.get();
-                    Vertex<T> vertex = vertexEntry.getKey();
-                    Integer weight = vertexEntry.getValue();
-
-                    builder.append(vertex.getLabel()).append(":").append(weight).append(" ");
-                }
+            builder.append(this.getLabel()).append(" -> ");
+            for (IVertex<T> vertex : adjList) {
+                builder.append(vertex.getLabel()).append(" ");
             }
         }
 
         return builder.toString();
-    }
-
-    public boolean addEdgeBetweenTwoVertex(Vertex<T> vertexIn, Integer weight) {
-        // Create Edge
-        Map<Vertex<T>, Integer> edge = new HashMap<>();
-        edge.put(vertexIn, weight);
-        // Adding in his adjacent list
-        return adjList.add(edge);
     }
 
     public T getLabel() {
@@ -63,7 +52,12 @@ public class Vertex<T> {
         this.label = label;
     }
 
-    public List<Map<Vertex<T>, Integer>> getAdjList() {
+    public List<IVertex<T>> getAdjList() {
         return this.adjList;
+    }
+
+    @Override
+    public void setAdjList(IVertex<T> adjList) {
+
     }
 }
