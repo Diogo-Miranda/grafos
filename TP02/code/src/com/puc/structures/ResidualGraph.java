@@ -46,26 +46,23 @@ public class ResidualGraph<T> implements IGraph<T> {
         return success;
     }
 
-    private void DFSVisitDisjont(ResidualVertex<T> vertex, StringBuilder builder) {
+    private void DFSVisitDisjont(ResidualVertex<T> vertex, StringBuilder builder, boolean[] isVisited, int s) {
+
         for(Map<IVertex<T>, Integer> mapVertex : vertex.getFlowAdjList()) {
-            if(existFlow(vertex.getFlowAdjList())) {
-                mapVertex.forEach((key, value) -> {
-                    if (value >= 1) {
-                        builder.append(key.getLabel());
-                        mapVertex.replace(key, 0);
-                        DFSVisitDisjont((ResidualVertex<T>) key, builder);
+            if (existFlow(vertex.getFlowAdjList()) && !isVisited[s]) {
+                isVisited[s] = true;
+                for(Map.Entry<IVertex<T>, Integer> entry : mapVertex.entrySet()) {
+                    if (entry.getValue() >= 1) {
+                        builder.append(entry.getKey().getLabel());
+                        mapVertex.replace(entry.getKey(), 0);
+                        DFSVisitDisjont((ResidualVertex<T>) entry.getKey(), builder, isVisited, s++);
                     }
-                });
+                }
             }
         }
 
         System.out.println(builder.toString());
-        builder.replace(0, builder.length()-1, printPath(builder));
-    }
-
-    private String printPath(StringBuilder builder) {
-        builder.deleteCharAt(builder.length()-1);
-        return builder.toString();
+        builder.deleteCharAt(builder.length() - 1);
     }
 
     @Override
@@ -74,11 +71,15 @@ public class ResidualGraph<T> implements IGraph<T> {
 
         for(IVertex<T> vertex: verticesTemp) {
             ResidualVertex<T> residualVertex = (ResidualVertex<T>) vertex;
+
             StringBuilder builder = new StringBuilder();
 
             while(!residualVertex.getFlowAdjList().isEmpty() && existFlow(residualVertex.getFlowAdjList())) {
+                boolean[] isVisited = new boolean[residualVertex.getFlowAdjList().size()];
+
                 builder.append(residualVertex.getLabel());
-                DFSVisitDisjont(residualVertex, builder);
+                DFSVisitDisjont(residualVertex, builder, isVisited, 0);
+
                 System.out.print("\n");
             }
         }
